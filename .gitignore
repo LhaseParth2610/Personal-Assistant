@@ -1,0 +1,5 @@
+personal_ai_venv/
+
+.env
+
+chromedriver

@@ -1,0 +1,26 @@
+langchain==0.2.0
+langchain-community==0.2.0 
+# Core LangChain for command parsing and chaining.
+
+langchain-huggingface==0.0.3 
+# Integrates Mistral-7B-Instruct via Hugging Face API.
+
+speechrecognition==3.10.0 
+# Enables voice input for commands.
+
+requests==2.31.0 
+# Handles API calls (Hugging Face, Gmail).
+
+google-auth-oauthlib==1.2.0
+google-auth-httplib2==0.2.0
+google-api-python-client==2.111.0 
+# Gmail API for email drafting.
+
+python-dotenv==1.0.1
+# Securely loads API keys from .env. No duplicates exist; each serves a unique role. Ready to build the command parser?
+mistral-ai
+
+undetected-chromedriver
+
+#using pyinstaller to basically convert assistant.py into a executable a standalone executable.
+pyinstaller
