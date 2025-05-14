@@ -1,5 +1,18 @@
 personal_ai_venv/
 
 .env
-
+assistant.spec
 chromedriver
+# Build output
+dist/
+build/
+
+# IDE files (e.g. VS Code)
+.vscode/
+
+# Test results
+*.spec.js
+*.spec.ts
+
+# Other unwanted files (OS, editor)
+.DS_Store
