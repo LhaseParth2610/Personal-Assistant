@@ -19,7 +19,8 @@ A sleek **Tkinter-based AI assistant** powered by **Mistral 7B** and **Selenium*
 
 > **Tech:** `Mistral LLM`, `Selenium`, `queue-based threading`
 
-##Watch how it works
+### Watch how it works
+[![Watch Demo](demo/demo.png)](demo/demo.mp4)
 
 ---
 
