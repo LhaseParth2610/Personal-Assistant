@@ -1,84 +1,57 @@
-Personal AI Assistant 🧠
-Status: 🚧 In Progress
-A sleek Tkinter-based AI assistant powered by Mistral 7B and Selenium, automating tasks like email drafting and e-commerce searches with multithreading for a responsive UI and real-time updates. Boost your productivity with ease!
-Features
-Email Automation 📧
+# 🧠 Personal AI Assistant  
+Personal Assistant who makes your life way easier than it already is :D
 
-What: Draft and send emails via Gmail (e.g., “Send an email to john@example.com”).
-Automation:
-Threading: LLM generates drafts and Selenium automates Gmail in separate threads, keeping the UI snappy.
-Real-Time Updates: Instantly view and refine drafts (e.g., “Make it formal”) in the chat window.
+**Status:** 🚧 *In Progress*  
 
+A sleek **Tkinter-based AI assistant** powered by **Mistral 7B** and **Selenium**, automating tasks like email drafting and e-commerce searches with multithreading for a responsive UI and real-time updates.  
+**Boost your productivity with ease!**
 
-Tech: Mistral LLM, Selenium, queue-based threading.
+---
 
-E-commerce Search (In Progress) 🛒
+## ✨ Features
 
-Goal: Automate product searches on Amazon, Myntra, Flipkart.
-Progress:
-Fetches Amazon products (name, price, rating, image) with threaded Selenium queries.
-Ranks results (cheapest, highest-rated, balanced) and displays with images in Tkinter.
-Supports feedback (e.g., “only Amazon, medium price, better pattern”).
+### 📧 Email Automation
+- **What it does:**  
+  Drafts and sends emails via Gmail using natural language (e.g., *“Send an email to john@example.com”*).
+- **Automation Highlights:**
+  - **Threading:** Keeps UI responsive by running LLM and Selenium automation in separate threads.
+  - **Real-Time Updates:** Instantly view and refine drafts (e.g., *“Make it formal”*) in the chat window.
 
+> **Tech:** `Mistral LLM`, `Selenium`, `queue-based threading`
 
-Automation: Threaded searches ensure speed; dedicated browser profile enhances privacy.
-Next: Add Myntra/Flipkart, clickable purchase links.
+### Watch how it works
+[![Watch Demo](demo/demo.png)](demo/demo.mp4)
 
-Future Plans 🔮
+---
 
-File Organization: Auto-sort files by content (e.g., “organize photos by date”).
-Innovations:
-📢 Social Media: Schedule posts on X (e.g., “post about my event”).
-💸 Budget Tracking: Analyze spending and suggest savings.
-📝 Code Review: Auto-suggest code optimizations.
-📚 Learning Planner: Craft study schedules with online resources.
+### 🛒 E-commerce Search *(In Progress)*
+- **Goal:** Automate product searches on platforms like **Amazon**, **Myntra**, and **Flipkart**.
+- **Current Capabilities:**
+  - Fetches Amazon products (name, price, rating, image).
+  - Uses **threaded Selenium queries** for speed.
+  - Displays results in Tkinter with images and feedback options (e.g., *“only Amazon, medium price, better pattern”*).
+- **Coming Soon:**
+  - Add Myntra & Flipkart support.
+  - Clickable purchase links.
 
+> **Automation:** Threaded searches + dedicated browser profile for enhanced privacy
 
+---
 
-Setup 🛠️
+## 🔮 Future Plans
 
-Clone: git clone <repo-url>
+| Feature            | Description                                                |
+|--------------------|------------------------------------------------------------|
+| 🗂️ File Organizer   | Auto-sort files by content (e.g., “organize photos by date”) |
+| 📢 Social Media     | Schedule posts (e.g., *“post about my event on X”*)         |
+| 💸 Budget Tracker   | Analyze spending, suggest savings                          |
+| 🧠 Code Review      | Auto-suggest code improvements                              |
+| 📚 Learning Planner | Plan study schedules + recommend online resources          |
 
-Install: pip install -r requirements.txt
+---
 
-Add .env:
-MISTRAL_API_KEY=<your-key>
+## 🛠️ Setup
 
-
-Install Brave browser and chromedriver.
-
-Run: python assistant.py
-
-
-Structure 📂
-
-assistant.py: Tkinter UI, query routing.
-emails_utils.py: Email drafting/sending.
-ecommerce_utils.py: E-commerce searches.
-Dependencies: tkinter, mistralai, selenium, undetected-chromedriver, Pillow, requests.
-
-Notes 📝
-
-In Progress: E-commerce expanding, new features coming!
-Contribute: Share ideas for automations!
-
-Adding a Video 🎥
-To showcase a demo or tutorial, add a video to the README using one of these methods:
-
-YouTube/Vimeo Link: Upload to YouTube or Vimeo and embed with a markdown link:
-[Watch the Demo](https://www.youtube.com/watch?v=your-video-id)
-
-
-GIF for GitHub: Convert a short video to a GIF (use tools like ezgif.com), upload to your GitHub repo, and embed:
-![Demo GIF](path/to/demo.gif)
-
-
-Hosted Video: Host an MP4 on GitHub or a CDN, but note that markdown doesn’t support direct video embedding. Use an image link to the video:
-[![Demo Video](path/to/thumbnail.png)](path/to/video.mp4)
-
-
-Tip: For GitHub, GIFs work best for seamless display. Keep videos short (<10s) for quick loading.
-
-
-License 📜
-MIT License
+1. **Clone the repo**  
+   ```bash
+   git clone <repo-url>
