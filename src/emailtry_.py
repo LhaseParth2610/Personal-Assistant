@@ -28,8 +28,25 @@ options.add_argument("--profile-directory=Default")
 options.add_argument("--no-first-run")
 options.add_argument("--no-default-browser-check")
 
-# Initialize Selenium driver
+"""
+When Selenium opens Gmail sometimes there might be some previously open compose windows (drafts), 
+they remain open, which can interfere with the automation process
 
+"""
+def close_open_compose_windows(driver, wait):
+    """Close any open compose windows in Gmail."""
+    try:
+        print("Checking for open compose windows...")
+        # Locate all close buttons for open compose windows
+        close_buttons = driver.find_elements(By.XPATH, "//img[@aria-label='Close']")
+        
+        for button in close_buttons:
+            print("Closing an open compose window...")
+            button.click()
+            time.sleep(1)  # Small delay to ensure the window is closed
+        print("All open compose windows have been closed.")
+    except Exception as e:
+        print(f"Error while closing compose windows: {e}")
 
 def extract_recipient(prompt):
     """Extract email address from the prompt using regex."""
@@ -40,7 +57,7 @@ def extract_recipient(prompt):
 def generate_email_draft(prompt, recipient):
     """Generate subject and body using Mistral 7B, with recipient provided."""
     with Mistral(api_key=api_key) as client:
-        # Structured prompt to infer subject and generate body
+        
         mistral_prompt = f"""
         Based on the following prompt, infer an appropriate email subject and generate a professional email body. Return the result in the format:
         Subject: [subject line]
@@ -83,72 +100,31 @@ def fill_gmail_draft(driver, wait, recipient, subject, body): # Pass driver and 
 
         # --- Try different locators and methods for the recipient field ---
         recipient_field = None
-        try:
-            # Attempt 1: More Robust Locator (Check aria-label in dev tools)
-            print("Waiting for recipient field (Attempt 1: aria-label)...")
-            recipient_locator = (By.CSS_SELECTOR, "textarea[aria-label='To recipients'], input[aria-label='To recipients']") # Try both textarea and input
-            recipient_field = wait.until(EC.element_to_be_clickable(recipient_locator))
-            print("Recipient field found using aria-label.")
+        
+        # Attempt 1: More Robust Locator (Check aria-label in dev tools)
+        print("Waiting for recipient field (Attempt 1: aria-label)...")
+        recipient_locator = (By.CSS_SELECTOR, "textarea[aria-label='To recipients'], input[aria-label='To recipients']") # Try both textarea and input
+        recipient_field = wait.until(EC.element_to_be_clickable(recipient_locator))
+        print("Recipient field found using aria-label.")
 
-        except TimeoutException:
-            print("Recipient field with aria-label not found or clickable.")
-            try:
-                 # Attempt 2: Locator by name (Common for forms)
-                print("Waiting for recipient field (Attempt 2: name='to')...")
-                recipient_locator = (By.NAME, "to")
-                recipient_field = wait.until(EC.element_to_be_clickable(recipient_locator))
-                print("Recipient field found using name='to'.")
-            except TimeoutException:
-                 print("Recipient field with name='to' not found or clickable. Trying original ID (less recommended)...")
-                 try:
-                     # Attempt 3: Original ID (Fallback, less reliable)
-                     recipient_locator = (By.ID, "uu") # Your original locator
-                     recipient_field = wait.until(EC.element_to_be_clickable(recipient_locator))
-                     print("Recipient field found using ID='uu'.")
-                 except TimeoutException:
-                     print("ERROR: Could not find or click the recipient field using multiple strategies.")
-                     return # Exit function if field cannot be found
-
-        # ... inside fill_gmail_draft, after finding recipient_field ...
 
         if recipient_field:
             print(f"Attempting to fill recipient: {recipient}")
 
-            # Method 1: Click, Pause, Send Keys (if this worked)
-            try:
-                recipient_field.click() # Ensure focus
-                time.sleep(0.5)
-                recipient_field.send_keys(recipient)
-                print("Filled recipient using click, sleep, send_keys.")
-                # ****** ADD THIS LINE ******
-                print("Sending TAB key to confirm recipient and move focus...")
-                recipient_field.send_keys(Keys.TAB)
-                time.sleep(0.5) # Brief pause for UI to react to TAB
-                # **************************
 
-                # Now proceed to Subject field without extra clicks here
+        
+            recipient_field.click() 
+            time.sleep(0.5)
+            recipient_field.send_keys(recipient)
+            print("Filled recipient using click, sleep, send_keys.")
+            
+            print("Sending TAB key to confirm recipient and move focus...")
+            recipient_field.send_keys(Keys.TAB)
+            time.sleep(0.5) # giveing time so to adjust to the tab key being pressed
 
-            except Exception as e:
-                print(f"Method 1 failed: {e}. Trying Method 2 (JavaScript)...")
-                # Method 2: JavaScript Execution (if this worked)
-                try:
-                    driver.execute_script("arguments[0].value = arguments[1];", recipient_field, recipient)
-                    driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", recipient_field)
-                    print("Filled recipient using JavaScript.")
-                    # ****** ADD THIS LINE ******
-                    print("Sending TAB key to confirm recipient and move focus...")
-                    recipient_field.send_keys(Keys.TAB)
-                    time.sleep(0.5) # Brief pause for UI to react to TAB
-                    # **************************
-
-                     # Now proceed to Subject field without extra clicks here
-
-                except Exception as js_e:
-                     print(f"ERROR: JavaScript method failed: {js_e}")
-                     return
-
+            
             # --- Fill Subject ---
-            # Wait specifically for the subject field to be ready AFTER sending TAB
+            
             print("Waiting for Subject field...")
             subject_field = wait.until(EC.visibility_of_element_located((By.NAME, "subjectbox")))
             print("Filling subject...")
@@ -159,10 +135,12 @@ def fill_gmail_draft(driver, wait, recipient, subject, body): # Pass driver and 
             body_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div[aria-label='Message Body']")))
             print("Filling body...")
             body_field.send_keys(body)
+            
             print("Draft filled.")
 
         else:
             print("ERROR: Could not proceed without locating the recipient field.")
+        
 
 # ... rest of the code ...
     except TimeoutException as e:
@@ -190,14 +168,16 @@ def send_email(driver):
     print("Email sent!")
 
 def main():
-    # ...(your existing setup)...
-    # Initialize Selenium driver (ensure driver and wait are defined)
+    # Initialize Selenium driver
     driver = uc.Chrome(options=options, driver_executable_path=chrome_driver_path)
-    wait = WebDriverWait(driver, 20) # Adjust timeout as needed
+    wait = WebDriverWait(driver, 20)  # Adjust timeout as needed
+    print("Navigating to Gmail...")
+    driver.get("https://mail.google.com/mail/u/0/#inbox")
+    close_open_compose_windows(driver,wait)
 
     print("Type 'exit' or 'break' to quit :D")
     while True:
-        prompt = input("Enter your email prompt (include recipient email): ")
+        prompt = input("IdiotAid : How may I help you today? ")
         if prompt.lower() in ('break', 'exit'):
             break
 
@@ -209,19 +189,56 @@ def main():
 
         # Generate initial email draft
         subject, body = generate_email_draft(prompt, recipient)
+        """As the mistral7b model doesnt have contextual awareness updating the email drafte by just giving it the prompt of what to update was not possible so 
+           here we are saving the current context and giving it to the model again for context. 
+        """
+        current_context = {
+            "recipient": recipient,
+            "subject": subject,
+            "body": body
+        }
         print(f"\nDraft:\nRecipient: {recipient}\nSubject: {subject}\nBody: {body}\n")
 
-        # Fill Gmail draft - pass driver and wait
+        # Fill Gmail draft
         fill_gmail_draft(driver, wait, recipient, subject, body)
 
         # Feedback loop
-        # ... (rest of your feedback loop - ensure driver/wait are available if needed) ...
-        # Make sure update_gmail_draft also uses robust waits/locators if needed
+        while True:
+            proceed = input("IdiotAid: Are you satisfied with this draft? Would you like to make any changes? (yes/no): ").strip().lower()
+            if proceed == "yes":
+                send_email(driver)
+                break
+            else:
+                # Ask the user for changes
+
+                new_prompt = input("IdiotAid: Please describe the changes you'd like to make to the draft: ").strip()
+                
+                # Creating a contextual promt that gives the model the current context as well as the new instructions for the update.
+                contextual_prompt = f"""
+                The current email draft is as follows:
+                Subject: {current_context['subject']}
+                Body: {current_context['body']}
+
+                Please update the draft based on the following instructions:
+                {new_prompt}
+                """
+
+                # Generate updated draft using Mistral
+                updated_subject, updated_body = generate_email_draft(contextual_prompt, recipient)
+                print(f"\nUpdated Draft:\nRecipient: {recipient}\nSubject: {updated_subject}\nBody: {updated_body}\n")
+
+                # Update the Gmail draft
+                update_gmail_draft(driver, updated_subject, updated_body)
+                # after each update we are saving the context if need be for another update
+                current_context["subject"]=updated_subject
+                current_context["body"]=updated_body
+
+                # Ask again if the user is satisfied
+                continue  # Loop back to ask for feedback again
 
     # Clean up
     print("Quitting driver.")
     driver.quit()
-
 
 if __name__ == "__main__":
     main()
